@@ -5,6 +5,7 @@ import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
         password: config.get<string>("DB_PASSWORD"),
         port: config.get<number>("DB_PORT"),
         database: config.get<string>("DB_NAME"),
-        entities: [__dirname + "dis/**/*.entity{.ts,.js}"],
+        entities: [__dirname + "/**/*.entity{.ts,.js}"],
         synchronize: true,
         autoLoadEntities: true,
         logging: false,
@@ -33,6 +34,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
     }),
     AdminModule,
     AuthModule,
+    UserModule,
   ],
   controllers: [],
   providers: [],

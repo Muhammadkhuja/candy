@@ -22,7 +22,9 @@ import { UpdateAdminPasswordDto } from "./dto/update-password.dto";
 @ApiBearerAuth("access-token")
 @Controller("admin")
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(
+    private readonly adminService: AdminService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: "Admin qo'shish" })

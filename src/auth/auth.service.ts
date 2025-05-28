@@ -1,16 +1,26 @@
-import { BadGatewayException, BadRequestException, ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
-import { AdminService } from '../admin/admin.service';
-import { Admin } from '../admin/entities/admin.entity';
-import { JwtService } from '@nestjs/jwt';
-import { CreateAdminDto } from '../admin/dto/create-admin.dto';
+import {
+  BadGatewayException,
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+} from "@nestjs/common";
+import { AdminService } from "../admin/admin.service";
+import { Admin } from "../admin/entities/admin.entity";
+import { JwtService } from "@nestjs/jwt";
+import { CreateAdminDto } from "../admin/dto/create-admin.dto";
 import * as bcrypt from "bcrypt";
-import { SingInDto } from './dto/sing-in.dto';
+import { SingInDto } from "./dto/sing-in.dto";
 import { Request, Response } from "express";
+import { UserService } from "../user/user.service";
+import { User } from "../user/entities/user.entity";
+import { CreateUserDto } from "../user/dto/create-user.dto";
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly adminService: AdminService,
+    private readonly userService: UserService,
     private readonly jwtService: JwtService
   ) {}
   async AdmingenerateToken(admin: Admin) {
@@ -35,6 +45,32 @@ export class AuthService {
     };
   }
 
+  //-------------------------------------------------------------------------------------------------
+
+  async UsergenerateToken(user: User) {
+    const payload = {
+      id: user.id,
+      is_active: user.is_active,
+      role: user.role,
+    };
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(payload, {
+        secret: process.env.ACCESS_TOKEN_KEY,
+        expiresIn: process.env.ACCESS_TOKEN_TIME,
+      }),
+      this.jwtService.signAsync(payload, {
+        secret: process.env.REFRESH_TOKEN_KEY,
+        expiresIn: process.env.REFRESH_TOKEN_TIME,
+      }),
+    ]);
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  //-------------------------------------------------------------------------------------------------
+
   async singUpAdmin(createAdminDto: CreateAdminDto) {
     const candidate = await this.adminService.findAdminByEmail(
       createAdminDto.email
@@ -46,8 +82,8 @@ export class AuthService {
     return { message: "Foydalanuvchi qo'shildi", adminId: newAdmin.id };
   }
 
-    async singInAdmin(singInDto: SingInDto, res: Response) {
-      const admin = await this.adminService.findAdminByEmail(singInDto.email);
+  async singInAdmin(singInDto: SingInDto, res: Response) {
+    const admin = await this.adminService.findAdminByEmail(singInDto.email);
 
     if (!admin) {
       throw new BadRequestException("Email yoki password hato");
@@ -56,7 +92,6 @@ export class AuthService {
       singInDto.password,
       admin.hashed_password
     );
-
 
     if (!isValidPassword) {
       throw new BadRequestException("Email yoki passwor hato p ");
@@ -118,6 +153,105 @@ export class AuthService {
     const hashed_refresh_token = await bcrypt.hash(tokens.refreshToken, 7);
     admin.refresh_token = hashed_refresh_token;
     await this.adminService.update(admin.id, admin);
+
+    res.cookie("refresh_token", tokens.refreshToken, {
+      maxAge: Number(process.env.COOKIE_TIME),
+    });
+
+    return {
+      message: "Token refresh token ga o'zgardi ",
+      accessToken: tokens.accessToken,
+    };
+  }
+
+  //-------------------------------------------------------------------------------------------------
+
+  async singUpUser(createUserDto: CreateUserDto) {
+    const candidate = await this.userService.findUserByEmail(
+      createUserDto.email
+    );
+    if (candidate) {
+      throw new ConflictException("Bunday foydalanuvchi mavjud");
+    }
+    const newUser = await this.userService.create(createUserDto);
+    return { message: "Foydalanuvchi qo'shildi", userId: newUser.id };
+  }
+
+  async singInUser(singInDto: SingInDto, res: Response) {
+    const user = await this.userService.findUserByEmail(singInDto.email);
+
+    if (!user) {
+      throw new BadRequestException("Email yoki password hato");
+    }
+
+    const isValidPassword = await bcrypt.compare(
+      singInDto.password,
+      user.hashed_password
+    );
+
+    if (!isValidPassword) {
+      throw new BadRequestException("Email yoki password hato");
+    }
+
+    const tokens = await this.UsergenerateToken(user);
+
+    res.cookie("refresh_token", tokens.refreshToken, {
+      httpOnly: true,
+      maxAge: Number(process.env.COOKIE_TIME),
+    });
+
+    try {
+      const hashed_refresh_token = await bcrypt.hash(tokens.refreshToken, 7);
+      user.refresh_token = hashed_refresh_token;
+      await this.userService.update(user.id, user);
+    } catch (error) {
+      console.log("Token da xatolik !?!");
+    }
+
+    return {
+      message: "Tizimga hush kelibsiz",
+      accessToken: tokens.accessToken,
+    };
+  }
+
+  async singOutUser(req: Request, res: Response) {
+    const refresh_token = req.cookies.refresh_token;
+
+    const user = await this.userService.findUserByRefresh(refresh_token);
+
+    if (!user) {
+      throw new BadGatewayException("Token yo'q yoki noto'g'ri");
+    }
+
+    user.refresh_token = "";
+    await this.userService.update(user.id, user);
+
+    res.clearCookie("refresh_token");
+
+    return { message: "Siz endi yo'q siz !?" };
+  }
+
+  async UserrefreshToken(req: Request, res: Response) {
+    const refresh_token = req.cookies["refresh_token"];
+    if (!refresh_token) {
+      throw new ForbiddenException("Refresh token yo'q");
+    }
+
+    const users = await this.userService.findAll();
+    const user = users.find(
+      (user) =>
+        user.refresh_token &&
+        bcrypt.compareSync(refresh_token, user.refresh_token)
+    );
+
+    if (!user) {
+      throw new ForbiddenException("Refresh token noto'g'ri");
+    }
+
+    const tokens = await this.UsergenerateToken(user);
+    const hashed_refresh_token = await bcrypt.hash(tokens.refreshToken, 7);
+    user.refresh_token = hashed_refresh_token;
+    await this.userService.update(user.id, user);
 
     res.cookie("refresh_token", tokens.refreshToken, {
       maxAge: Number(process.env.COOKIE_TIME),

@@ -2,7 +2,7 @@ import { Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString, Length } from "class-validator";
 
-export class UpdateAdminPasswordDto {
+export class UpdateUserPasswordDto {
   @Field()
   @IsString()
   @Length(6, 100, { message: "Kamida 6 ta belgi bo'lsin" })
@@ -16,7 +16,7 @@ export class UpdateAdminPasswordDto {
   @IsString()
   @Length(6, 100, { message: "Kamida 6 ta belgi bo'lsin" })
   @ApiProperty({
-    example: "parol123",
+    example: "hey123",
     description: "Yangi parolni kiriting",
   })
   newpassword: string;

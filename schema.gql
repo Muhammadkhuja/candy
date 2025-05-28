@@ -20,14 +20,29 @@ input CreateAdminDto {
   role: String!
 }
 
+input CreateUserDto {
+  confirm_password: String!
+  email: String!
+  location: String!
+  name: String!
+  password: String!
+  phone: String!
+  role: String!
+}
+
 type Mutation {
+  create(createUser: CreateUserDto!): User!
   createAdmin(createAdmin: CreateAdminDto!): Admin!
+  remove(id: ID!): Float!
   removeAdmin(id: ID!): Float!
+  update(id: ID!, updateUser: UpdateUserDto!): User!
   updateAdmin(id: ID!, updateAdmin: UpdateAdminDto!): Admin!
 }
 
 type Query {
+  findAll: [User!]!
   findAllAdmin: [Admin!]!
+  findOne(id: Float!): User!
   findOneAdmin(id: Float!): Admin!
 }
 
@@ -38,4 +53,26 @@ input UpdateAdminDto {
   password: String
   phone: String
   role: String
+}
+
+input UpdateUserDto {
+  confirm_password: String
+  email: String
+  location: String
+  name: String
+  password: String
+  phone: String
+  role: String
+}
+
+type User {
+  email: String!
+  hashed_password: String!
+  id: ID!
+  is_active: Boolean!
+  location: String!
+  name: String!
+  phone: String!
+  refresh_token: String
+  role: String!
 }
