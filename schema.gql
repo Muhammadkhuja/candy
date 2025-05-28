@@ -1,0 +1,41 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Admin {
+  email: String!
+  hashed_password: String!
+  id: ID!
+  is_active: Boolean!
+  name: String!
+  refresh_token: String!
+  role: String!
+}
+
+input CreateAdminDto {
+  confirm_password: String!
+  email: String!
+  name: String!
+  password: String!
+  role: String!
+}
+
+type Mutation {
+  createAdmin(createAdmin: CreateAdminDto!): Admin!
+  removeAdmin(id: ID!): Float!
+  updateAdmin(id: ID!, updateAdmin: UpdateAdminDto!): Admin!
+}
+
+type Query {
+  findAllAdmin: [Admin!]!
+  findOneAdmin(id: Float!): Admin!
+}
+
+input UpdateAdminDto {
+  confirm_password: String
+  email: String
+  name: String
+  password: String
+  phone: String
+  role: String
+}
