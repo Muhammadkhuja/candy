@@ -36,8 +36,7 @@ export class UserService {
   }
 
   async findAll() {
-    const hello = await this.userRepo.find({ relations: ["cards"] });  
-    console.log(hello);
+    const hello = await this.userRepo.find({ relations: ["cards"] });
     return hello;
       
   }

@@ -20,12 +20,48 @@ type Card {
   user_id: User!
 }
 
+type Category {
+  children: [Category!]
+  description: String!
+  id: ID!
+  image: String!
+  name: String!
+  parent_id: Category
+  product: [Product!]!
+}
+
 input CreateAdminDto {
   confirm_password: String!
   email: String!
   name: String!
   password: String!
   role: String!
+}
+
+input CreateCategoryDto {
+  description: String!
+  image: String!
+  name: String!
+}
+
+input CreateProductDto {
+  category_id: Float!
+  description: String!
+  image: String!
+  ingridients: String!
+  is_available: Boolean!
+  name: String!
+  price: String!
+  shelf_life: String!
+  size: String!
+  weight: String!
+}
+
+input CreateStorageDto {
+  last_stoked: String!
+  min_level: Float!
+  product_id: Float!
+  quantity: Float!
 }
 
 input CreateUserDto {
@@ -41,17 +77,53 @@ input CreateUserDto {
 type Mutation {
   create(createUser: CreateUserDto!): User!
   createAdmin(createAdmin: CreateAdminDto!): Admin!
+  createCategory(createCategoryDto: CreateCategoryDto!): Category!
+  createProduct(createProductInput: CreateProductDto!): Product!
+  createStorage(createStorageDto: CreateStorageDto!): Storage!
   remove(id: ID!): Float!
   removeAdmin(id: ID!): Float!
+  removeCategory(id: ID!): Category!
+  removeProduct(id: Int!): String!
+  removeStorage(id: Int!): String!
   update(id: ID!, updateUser: UpdateUserDto!): User!
   updateAdmin(id: ID!, updateAdmin: UpdateAdminDto!): Admin!
+  updateCategory(id: ID!, updateCategoryDto: UpdateCategoryDto!): Category!
+  updateProduct(id: Int!, updateProductInput: UpdateProductDto!): Product!
+  updateStorage(id: Int!, updateStorageDto: UpdateStorageDto!): Storage!
+}
+
+type Product {
+  category_id: Category!
+  description: String!
+  id: ID!
+  image: String!
+  ingridients: String!
+  is_available: Boolean!
+  name: String!
+  price: String!
+  shelf_life: String!
+  size: String!
+  storage: [Storage!]!
+  weight: String!
 }
 
 type Query {
-  findAll: [User!]!
+  findAll: [Category!]!
   findAllAdmin: [Admin!]!
-  findOne(id: Float!): User!
+  findOne(id: Float!): Category!
   findOneAdmin(id: Float!): Admin!
+  getAllStorage: [Storage!]!
+  getOneStorage(id: Int!): Storage!
+  product(id: Int!): Product
+  products: [Product!]!
+}
+
+type Storage {
+  id: ID!
+  last_stoked: String!
+  min_level: Float!
+  product_id: Product!
+  quantity: Float!
 }
 
 input UpdateAdminDto {
@@ -61,6 +133,32 @@ input UpdateAdminDto {
   password: String
   phone: String
   role: String
+}
+
+input UpdateCategoryDto {
+  description: String!
+  image: String!
+  name: String!
+}
+
+input UpdateProductDto {
+  category_id: Float
+  description: String
+  image: String
+  ingridients: String
+  is_available: Boolean
+  name: String
+  price: String
+  shelf_life: String
+  size: String
+  weight: String
+}
+
+input UpdateStorageDto {
+  last_stoked: String!
+  min_level: Float!
+  product_id: Float!
+  quantity: Float!
 }
 
 input UpdateUserDto {

@@ -67,7 +67,7 @@ export class CardsService {
 
   async remove(id: number) {
     const card = await this.cardRepo.delete(id);
-    if (!card) {
+    if (!card.affected) {
       throw new NotFoundException("Karta topilmadi");
     }
 

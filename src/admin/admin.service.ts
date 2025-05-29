@@ -75,7 +75,7 @@ export class AdminService {
 
   async remove(id: number) {
     const delet = await this.adminRepo.delete(id);
-    if (!delet) {
+    if (!delet.affected) {
       throw new NotFoundException("Admin topilmadi");
     }
     return {

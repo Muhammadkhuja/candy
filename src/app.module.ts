@@ -7,6 +7,10 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UserModule } from './user/user.module';
 import { CardsModule } from './cards/cards.module';
+import { CategoryModule } from './category/category.module';
+import { ProductModule } from './product/product.module';
+import { StorageModule } from './storage/storage.module';
+import { ShippingoptionsModule } from './shippingoptions/shippingoptions.module';
 
 @Module({
   imports: [
@@ -37,6 +41,10 @@ import { CardsModule } from './cards/cards.module';
     AuthModule,
     UserModule,
     CardsModule,
+    CategoryModule,
+    ProductModule,
+    StorageModule,
+    ShippingoptionsModule,
   ],
   controllers: [],
   providers: [],

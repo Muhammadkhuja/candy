@@ -4,7 +4,6 @@ import { UserController } from './user.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { UserResolver } from './user.resolver';
-import { Card } from '../cards/entities/card.entity';
 import { CardsModule } from '../cards/cards.module';
 
 @Module({
