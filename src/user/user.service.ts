@@ -11,6 +11,7 @@ import * as bcrypt from "bcrypt";
 import { User } from "./entities/user.entity";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { Card } from "../cards/entities/card.entity";
 
 @Injectable()
 export class UserService {
@@ -34,8 +35,11 @@ export class UserService {
     });
   }
 
-  findAll() {
-    return this.userRepo.find();
+  async findAll() {
+    const hello = await this.userRepo.find({ relations: ["cards"] });  
+    console.log(hello);
+    return hello;
+      
   }
 
   async findOne(id: number) {

@@ -7,8 +7,9 @@ import {
   IsString,
   Length,
 } from "class-validator";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
+import { Card } from "../../cards/entities/card.entity";
 
 @ObjectType()
 @Entity()
@@ -98,4 +99,8 @@ export class User {
   @IsOptional()
   @IsString()
   refresh_token: string;
+
+  @OneToMany((type) => Card, (card) => card.user_id)
+  @Field((type)=> [Card])
+  cards: Card[]
 }

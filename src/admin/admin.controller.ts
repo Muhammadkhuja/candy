@@ -22,9 +22,7 @@ import { UpdateAdminPasswordDto } from "./dto/update-password.dto";
 @ApiBearerAuth("access-token")
 @Controller("admin")
 export class AdminController {
-  constructor(
-    private readonly adminService: AdminService,
-  ) {}
+  constructor(private readonly adminService: AdminService) {}
 
   @Post()
   @ApiOperation({ summary: "Admin qo'shish" })
@@ -45,18 +43,19 @@ export class AdminController {
     description: "Barcha adminlar muvaffaqiyatli olindi",
     type: [CreateAdminDto],
   })
+  @ApiResponse({ status: 404, description: "Admin topilmadi" })
   findAll() {
     return this.adminService.findAll();
   }
 
   @Get(":id")
-  @Get(":id")
-  @ApiOperation({ summary: "Admin olish" })
+  @ApiOperation({ summary: "Id bo'yicha Admin olish" })
   @ApiResponse({
     status: 200,
     description: "Admin muvaffaqiyatli topildi",
     type: CreateAdminDto,
   })
+  @ApiResponse({ status: 404, description: "Admin topilmadi" })
   findOne(@Param("id") id: string) {
     return this.adminService.findOne(+id);
   }
@@ -68,6 +67,7 @@ export class AdminController {
     description: "Admin muvaffaqiyatli yangilandi",
     type: UpdateAdminDto,
   })
+  @ApiResponse({ status: 404, description: "Admin topilmadi" })
   update(@Param("id") id: string, @Body() updateAdminDto: UpdateAdminDto) {
     return this.adminService.update(+id, updateAdminDto);
   }
@@ -77,8 +77,9 @@ export class AdminController {
   @ApiResponse({
     status: 200,
     description: "Admin muvaffaqiyatli o'chirildi",
-    type: String,
+    type: Number,
   })
+  @ApiResponse({ status: 404, description: "Admin topilmadi" })
   remove(@Param("id") id: string) {
     return this.adminService.remove(+id);
   }

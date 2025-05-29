@@ -12,6 +12,14 @@ type Admin {
   role: String!
 }
 
+type Card {
+  date: String!
+  id: ID!
+  name: String!
+  number: String!
+  user_id: User!
+}
+
 input CreateAdminDto {
   confirm_password: String!
   email: String!
@@ -66,6 +74,7 @@ input UpdateUserDto {
 }
 
 type User {
+  cards: [Card!]!
   email: String!
   hashed_password: String!
   id: ID!
