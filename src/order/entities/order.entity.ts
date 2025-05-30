@@ -1,9 +1,10 @@
 import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
 import { IsNotEmpty, IsString, IsNumber } from "class-validator";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { User } from "../../user/entities/user.entity";
 import { Shippingoption } from "../../shippingoptions/entities/shippingoption.entity";
+import { Orderitem } from "../../orderitems/entities/orderitem.entity";
 
 @ObjectType()
 @Entity()
@@ -81,7 +82,7 @@ export class Order {
 
   @ManyToOne(
     (type) => Shippingoption,
-    (shippingoption_id) => shippingoption_id.order
+    (shippingoption_id) => shippingoption_id.order1
   )
   @Field((type) => Shippingoption)
   @ApiProperty({
@@ -89,4 +90,8 @@ export class Order {
     description: "Yetkazib berish opsiyasi ID raqami",
   })
   shippingoption_id: Shippingoption;
+
+    @OneToMany((type) => Orderitem, (orderitem) => orderitem.order)
+    @Field((type) => [Orderitem])
+    orderitem: Orderitem[];
 }

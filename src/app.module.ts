@@ -12,6 +12,8 @@ import { ProductModule } from './product/product.module';
 import { StorageModule } from './storage/storage.module';
 import { ShippingoptionsModule } from './shippingoptions/shippingoptions.module';
 import { OrderModule } from './order/order.module';
+import { OrderitemsModule } from './orderitems/orderitems.module';
+import { SavatModule } from './savat/savat.module';
 
 @Module({
   imports: [
@@ -47,6 +49,8 @@ import { OrderModule } from './order/order.module';
     StorageModule,
     ShippingoptionsModule,
     OrderModule,
+    OrderitemsModule,
+    SavatModule,
   ],
   controllers: [],
   providers: [],

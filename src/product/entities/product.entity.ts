@@ -9,6 +9,7 @@ import {
 } from "class-validator";
 import { Category } from "../../category/entities/category.entity";
 import { Storage } from "../../storage/entities/storage.entity";
+import { Orderitem } from "../../orderitems/entities/orderitem.entity";
 
 @ObjectType()
 @Entity()
@@ -45,9 +46,12 @@ export class Product {
   @IsNotEmpty()
   description: string;
 
-  @ManyToOne((type) => Category, (category_id)=> category_id.product)
-  @Field((type)=> Category)
-  @ApiProperty({ type: () => Category, description: "Mahsulotning kategoriya ID si" })
+  @ManyToOne((type) => Category, (category_id) => category_id.product)
+  @Field((type) => Category)
+  @ApiProperty({
+    type: () => Category,
+    description: "Mahsulotning kategoriya ID si",
+  })
   @IsNumber()
   category_id: Category;
 
@@ -96,8 +100,11 @@ export class Product {
   @IsNotEmpty()
   is_available: boolean;
 
+  @OneToMany((type) => Storage, (storage) => storage.product_id)
+  @Field((type) => [Storage])
+  storage: Storage[];
 
-  @OneToMany((type)=>Storage, (storage)=> storage.product_id)
-  @Field((type)=>[Storage])
-  storage: Storage[]
+  @OneToMany((type) => Orderitem, (orderitem) => orderitem.product)
+  @Field((type) => [Orderitem])
+  orderitem: Orderitem[];
 }

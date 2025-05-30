@@ -26,8 +26,9 @@ export class OrderService {
     return this.orderRepo.save(order);
   }
 
+  
   async findAll() {
-    return this.orderRepo.find();
+    return this.orderRepo.find({ relations: ["user_id", "shippingoption_id"]});
   }
 
   async findOne(id: number) {
@@ -37,15 +38,6 @@ export class OrderService {
     }
     return order;
   }
-
-  // async update(id: number, updateOrderDto: UpdateOrderDto) {
-  //   const order = await this.orderRepo.update(id, updateOrderDto);
-  //   if (!order) {
-  //     throw new NotFoundException("Order topilmadi");
-  //   }
-
-  //   return this.orderRepo.findOne({where: {id}});
-  // }
 
   async update(id: number, updateOrderDto: UpdateOrderDto) {
     const order = await this.orderRepo.findOne({
@@ -66,6 +58,16 @@ export class OrderService {
         throw new NotFoundException("Foydalanuvchi topilmadi");
       }
       order.user_id = user;
+    }
+
+    if (updateOrderDto.user_id) {
+      const user = await this.shippingoptionRepo.findOneBy({
+        id: updateOrderDto.user_id,
+      });
+      if (!user) {
+        throw new NotFoundException("Foydalanuvchi topilmadi");
+      }
+      order.shippingoption_id = user;
     }
 
     return await this.orderRepo.save(order);

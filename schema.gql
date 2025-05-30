@@ -56,6 +56,13 @@ input CreateOrderDto {
   user: Float
 }
 
+input CreateOrderitemDto {
+  order: Float!
+  product: Float!
+  quantity: String!
+  unit_price: String!
+}
+
 input CreateProductDto {
   category_id: Float!
   description: String!
@@ -91,18 +98,21 @@ type Mutation {
   createAdmin(createAdmin: CreateAdminDto!): Admin!
   createCategory(createCategoryDto: CreateCategoryDto!): Category!
   createOrder(createOrderDto: CreateOrderDto!): Order!
+  createOrderitem(createOrderitemInput: CreateOrderitemDto!): Orderitem!
   createProduct(createProductInput: CreateProductDto!): Product!
   createStorage(createStorageDto: CreateStorageDto!): Storage!
   remove(id: ID!): Float!
   removeAdmin(id: ID!): Float!
   removeCategory(id: ID!): Category!
   removeOrder(id: Int!): Order!
+  removeOrderitem(id: Int!): Orderitem!
   removeProduct(id: Int!): String!
   removeStorage(id: Int!): String!
   update(id: ID!, updateUser: UpdateUserDto!): User!
   updateAdmin(id: ID!, updateAdmin: UpdateAdminDto!): Admin!
   updateCategory(id: ID!, updateCategoryDto: UpdateCategoryDto!): Category!
   updateOrder(id: Int!, updateOrderDto: UpdateOrderDto!): Order!
+  updateOrderitem(id: Int!, updateOrderitemInput: UpdateOrderitemDto!): Orderitem!
   updateProduct(id: Int!, updateProductInput: UpdateProductDto!): Product!
   updateStorage(id: Int!, updateStorageDto: UpdateStorageDto!): Storage!
 }
@@ -111,6 +121,7 @@ type Order {
   id: ID!
   note: String!
   order_date: String!
+  orderitem: [Orderitem!]!
   payment_method: String!
   payment_status: String!
   phone: String!
@@ -118,6 +129,14 @@ type Order {
   shippingoption_id: Shippingoption!
   total_amout: String!
   user_id: User!
+}
+
+type Orderitem {
+  id: ID!
+  order: Order!
+  product: Product!
+  quantity: String!
+  unit_price: String!
 }
 
 type Product {
@@ -128,6 +147,7 @@ type Product {
   ingridients: String!
   is_available: Boolean!
   name: String!
+  orderitem: [Orderitem!]!
   price: String!
   shelf_life: String!
   size: String!
@@ -143,6 +163,8 @@ type Query {
   getAllStorage: [Storage!]!
   getOneStorage(id: Int!): Storage!
   order(id: Int!): Order!
+  orderitem(id: Int!): Orderitem!
+  orderitems: [Orderitem!]!
   orders: [Order!]!
   product(id: Int!): Product
   products: [Product!]!
@@ -159,7 +181,7 @@ type Shippingoption {
   max_distance_kn: String!
   min_order_amout: String!
   name: String!
-  order: [Order!]!
+  order1: [Order!]!
   phone: String!
   price_per_km: String!
   provider_image: String!
@@ -201,6 +223,13 @@ input UpdateOrderDto {
   shoppingoption_id: Float!
   total_amout: String!
   user_id: Float!
+}
+
+input UpdateOrderitemDto {
+  order: Float
+  product: Float
+  quantity: String
+  unit_price: String
 }
 
 input UpdateProductDto {

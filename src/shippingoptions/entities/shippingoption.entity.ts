@@ -8,6 +8,7 @@ import {
   IsPhoneNumber,
 } from "class-validator";
 import { Order } from "../../order/entities/order.entity";
+import { Orderitem } from "../../orderitems/entities/orderitem.entity";
 
 @ObjectType()
 @Entity()
@@ -136,8 +137,8 @@ export class Shippingoption {
   @IsNotEmpty()
   is_available: boolean;
 
-  
-    @OneToMany((type) => Order, (order) => order.shippingoption_id)
-    @Field((type)=> [Order])
-    order: Order[]
+  @OneToMany((type) => Order, (order1) => order1.shippingoption_id)
+  @Field((type) => [Order])
+  order1: Order[];
+
 }
