@@ -6,9 +6,10 @@ import { Order } from './entities/order.entity';
 import { OrderResolver } from './order.resolver';
 import { Shippingoption } from '../shippingoptions/entities/shippingoption.entity';
 import { User } from '../user/entities/user.entity';
+import { Savat } from '../savat/entities/savat.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order, Shippingoption, User]), ],
+  imports: [TypeOrmModule.forFeature([Order, Shippingoption, User, Savat]), ],
   controllers: [OrderController],
   providers: [OrderService, OrderResolver],
   exports: [OrderService, OrderResolver],

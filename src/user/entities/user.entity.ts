@@ -11,6 +11,9 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { Card } from "../../cards/entities/card.entity";
 import { Order } from "../../order/entities/order.entity";
+import { Savat } from "../../savat/entities/savat.entity";
+import { Sevimli } from "../../sevimli/entities/sevimli.entity";
+import { Review } from "../../reviews/entities/review.entity";
 
 @ObjectType()
 @Entity()
@@ -102,10 +105,22 @@ export class User {
   refresh_token: string;
 
   @OneToMany((type) => Card, (card) => card.user_id)
-  @Field((type)=> [Card])
-  cards: Card[]
+  @Field((type) => [Card])
+  cards: Card[];
 
   @OneToMany((type) => Order, (order) => order.user_id)
-  @Field((type)=> [Order])
-  order: Order[]
+  @Field((type) => [Order])
+  order: Order[];
+
+  @OneToMany((type) => Savat, (savat) => savat.user_id)
+  @Field((type) => [Savat])
+  savat: Savat[];
+
+  @OneToMany((type) => Sevimli, (sevimli) => sevimli.user_id)
+  @Field((type) => [Sevimli])
+  sevimli: Sevimli[];
+
+  @OneToMany((type) => Review, (review) => review.user_id)
+  @Field((type) => [Review])
+  review: Review[];
 }

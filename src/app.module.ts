@@ -14,6 +14,9 @@ import { ShippingoptionsModule } from './shippingoptions/shippingoptions.module'
 import { OrderModule } from './order/order.module';
 import { OrderitemsModule } from './orderitems/orderitems.module';
 import { SavatModule } from './savat/savat.module';
+import { SavatitemModule } from './savatitem/savatitem.module';
+import { SevimliModule } from './sevimli/sevimli.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
@@ -51,6 +54,9 @@ import { SavatModule } from './savat/savat.module';
     OrderModule,
     OrderitemsModule,
     SavatModule,
+    SavatitemModule,
+    SevimliModule,
+    ReviewsModule,
   ],
   controllers: [],
   providers: [],

@@ -76,6 +76,17 @@ input CreateProductDto {
   weight: String!
 }
 
+input CreateReviewDto {
+  product_id: ID!
+  rating: Float!
+  sevimli_id: ID!
+  user_id: ID!
+}
+
+input CreateSavatDto {
+  user_id: ID!
+}
+
 input CreateStorageDto {
   last_stoked: String!
   min_level: Float!
@@ -93,6 +104,11 @@ input CreateUserDto {
   role: String!
 }
 
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Mutation {
   create(createUser: CreateUserDto!): User!
   createAdmin(createAdmin: CreateAdminDto!): Admin!
@@ -100,6 +116,8 @@ type Mutation {
   createOrder(createOrderDto: CreateOrderDto!): Order!
   createOrderitem(createOrderitemInput: CreateOrderitemDto!): Orderitem!
   createProduct(createProductInput: CreateProductDto!): Product!
+  createReview(createReviewInput: CreateReviewDto!): Review!
+  createSavat(createSavatInput: CreateSavatDto!): Savat!
   createStorage(createStorageDto: CreateStorageDto!): Storage!
   remove(id: ID!): Float!
   removeAdmin(id: ID!): Float!
@@ -107,6 +125,8 @@ type Mutation {
   removeOrder(id: Int!): Order!
   removeOrderitem(id: Int!): Orderitem!
   removeProduct(id: Int!): String!
+  removeReview(id: Int!): Review!
+  removeSavat(id: Int!): Savat!
   removeStorage(id: Int!): String!
   update(id: ID!, updateUser: UpdateUserDto!): User!
   updateAdmin(id: ID!, updateAdmin: UpdateAdminDto!): Admin!
@@ -114,6 +134,8 @@ type Mutation {
   updateOrder(id: Int!, updateOrderDto: UpdateOrderDto!): Order!
   updateOrderitem(id: Int!, updateOrderitemInput: UpdateOrderitemDto!): Orderitem!
   updateProduct(id: Int!, updateProductInput: UpdateProductDto!): Product!
+  updateReview(id: Int!, updateReviewInput: UpdateReviewDto!): Review!
+  updateSavat(id: Int!, updateSavatInput: UpdateSavatDto!): Savat!
   updateStorage(id: Int!, updateStorageDto: UpdateStorageDto!): Storage!
 }
 
@@ -125,6 +147,7 @@ type Order {
   payment_method: String!
   payment_status: String!
   phone: String!
+  savat_id: Savat!
   shipping_address: String!
   shippingoption_id: Shippingoption!
   total_amout: String!
@@ -149,6 +172,9 @@ type Product {
   name: String!
   orderitem: [Orderitem!]!
   price: String!
+  review: [Review!]!
+  savatitem: [SavatItem!]!
+  sevimli: [Sevimli!]!
   shelf_life: String!
   size: String!
   storage: [Storage!]!
@@ -168,6 +194,44 @@ type Query {
   orders: [Order!]!
   product(id: Int!): Product
   products: [Product!]!
+  review(id: Int!): Review!
+  reviews: [Review!]!
+  savat(id: Int!): Savat!
+  savatlar: [Savat!]!
+}
+
+type Review {
+  id: ID!
+  product_id: Product!
+  rating: Float!
+  review_date: DateTime!
+  sevimli_id: Sevimli!
+  user_id: User!
+}
+
+type Savat {
+  created_at: DateTime!
+  id: ID!
+  order: [Order!]!
+  savatitem: [SavatItem!]!
+  user_id: User!
+}
+
+type SavatItem {
+  added_at: DateTime!
+  id: ID!
+  product_id: Product!
+  quantity: Float!
+  savat_id: Savat!
+  unit_price: Float!
+}
+
+type Sevimli {
+  created_at: DateTime!
+  id: ID!
+  product_id: Product!
+  review: [Review!]!
+  user_id: User!
 }
 
 type Shippingoption {
@@ -245,6 +309,17 @@ input UpdateProductDto {
   weight: String
 }
 
+input UpdateReviewDto {
+  product_id: ID
+  rating: Float
+  sevimli_id: ID
+  user_id: ID
+}
+
+input UpdateSavatDto {
+  user_id: ID
+}
+
 input UpdateStorageDto {
   last_stoked: String!
   min_level: Float!
@@ -273,5 +348,8 @@ type User {
   order: [Order!]!
   phone: String!
   refresh_token: String
+  review: [Review!]!
   role: String!
+  savat: [Savat!]!
+  sevimli: [Sevimli!]!
 }

@@ -5,6 +5,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { User } from "../../user/entities/user.entity";
 import { Shippingoption } from "../../shippingoptions/entities/shippingoption.entity";
 import { Orderitem } from "../../orderitems/entities/orderitem.entity";
+import { Savat } from "../../savat/entities/savat.entity";
 
 @ObjectType()
 @Entity()
@@ -66,11 +67,11 @@ export class Order {
   @IsNotEmpty({ message: "Izoh bo'sh bo'lishi mumkin emas" })
   note: string;
 
-  //   @ManyToOne((type)=> Savat, (savat_id)=> savat_id.order)
-  //   @IsNumber()
-  //   @Field((type) => Savat)
-  //   @ApiProperty({ type: () => Savat, description: "Savat ID raqami" })
-  //   savat_id: Savat;
+    @ManyToOne((type)=> Savat, (savat_id)=> savat_id.order)
+    @IsNumber()
+    @Field((type) => Savat)
+    @ApiProperty({ type: () => Savat, description: "Savat ID raqami" })
+    savat_id: Savat;
 
   @ManyToOne((type) => User, (user_id) => user_id.order)
   @Field((type) => User)

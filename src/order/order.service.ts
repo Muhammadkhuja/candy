@@ -9,6 +9,7 @@ import { CreateOrderDto } from "./dto/create-order.dto";
 import { UpdateOrderDto } from "./dto/update-order.dto";
 import { User } from "../user/entities/user.entity";
 import { Shippingoption } from "../shippingoptions/entities/shippingoption.entity";
+import { Savat } from "../savat/entities/savat.entity";
 
 @Injectable()
 export class OrderService {
@@ -18,7 +19,9 @@ export class OrderService {
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
     @InjectRepository(Shippingoption)
-    private readonly shippingoptionRepo: Repository<Shippingoption>
+    private readonly shippingoptionRepo: Repository<Shippingoption>,
+    @InjectRepository(Savat)
+    private readonly savatRepo: Repository<Savat>,
   ) {}
 
   async create(createOrderDto: CreateOrderDto) {
@@ -28,7 +31,7 @@ export class OrderService {
 
   
   async findAll() {
-    return this.orderRepo.find({ relations: ["user_id", "shippingoption_id"]});
+    return this.orderRepo.find({ relations: ["user_id", "shippingoption_id", "savat_id"]});
   }
 
   async findOne(id: number) {
@@ -42,7 +45,7 @@ export class OrderService {
   async update(id: number, updateOrderDto: UpdateOrderDto) {
     const order = await this.orderRepo.findOne({
       where: { id },
-      relations: ["user_id"],
+      relations: ["user_id", "shippingoption_id", "savat_id"],
     });
 
     if (!order) {
@@ -58,6 +61,16 @@ export class OrderService {
         throw new NotFoundException("Foydalanuvchi topilmadi");
       }
       order.user_id = user;
+    }
+
+    if (updateOrderDto.user_id) {
+      const user = await this.savatRepo.findOneBy({
+        id: updateOrderDto.user_id,
+      });
+      if (!user) {
+        throw new NotFoundException("Foydalanuvchi topilmadi");
+      }
+      order.savat_id = user;
     }
 
     if (updateOrderDto.user_id) {

@@ -1,15 +1,19 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { ApiProperty } from "@nestjs/swagger";
 import {
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-} from "class-validator";
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { ApiProperty } from "@nestjs/swagger";
+import { IsBoolean, IsNotEmpty, IsNumber, IsString } from "class-validator";
 import { Category } from "../../category/entities/category.entity";
 import { Storage } from "../../storage/entities/storage.entity";
 import { Orderitem } from "../../orderitems/entities/orderitem.entity";
+import { SavatItem } from "../../savatitem/entities/savatitem.entity";
+import { Sevimli } from "../../sevimli/entities/sevimli.entity";
+import { Review } from "../../reviews/entities/review.entity";
 
 @ObjectType()
 @Entity()
@@ -107,4 +111,18 @@ export class Product {
   @OneToMany((type) => Orderitem, (orderitem) => orderitem.product)
   @Field((type) => [Orderitem])
   orderitem: Orderitem[];
+
+  @OneToMany((type) => SavatItem, (savatitem) => savatitem.product_id)
+  @Field((type) => [SavatItem])
+  savatitem: SavatItem[];
+
+  
+    @OneToMany((type) => Sevimli, (sevimli) => sevimli.user_id)
+    @Field((type) => [Sevimli])
+    sevimli: Sevimli[];
+
+    
+      @OneToMany((type) => Review, (review) => review.product_id)
+      @Field((type) => [Review])
+      review: Review[];
 }

@@ -19,7 +19,6 @@ export class OrderitemsService {
   ) {}
 
   async create(createOrderitemDto: CreateOrderitemDto) {
-    // Order va Productni bazadan topamiz
     const order = await this.orderRepo.findOne({
       where: { id: createOrderitemDto.order },
     });
@@ -34,7 +33,6 @@ export class OrderitemsService {
       throw new NotFoundException("Mahsulot topilmadi");
     }
 
-    // Yangi orderitem yaratamiz va bog‘laymiz
     const orderitem = this.orderitemRepo.create({
       quantity: createOrderitemDto.quantity,
       unit_price: createOrderitemDto.unit_price,
@@ -42,7 +40,6 @@ export class OrderitemsService {
       product: product,
     });
 
-    // Saqlaymiz
     return this.orderitemRepo.save(orderitem);
   }
 
@@ -75,10 +72,8 @@ export class OrderitemsService {
       throw new NotFoundException("Orderitem topilmadi");
     }
 
-    // DTO dan oddiy qiymatlarni o‘zgartirish
     Object.assign(orderItem, updateOrderitemDto);
 
-    // order_id bo‘lsa, tegishli order borligini tekshiramiz
     if (updateOrderitemDto.order) {
       const order = await this.orderRepo.findOneBy({
         id: updateOrderitemDto.order,
@@ -89,7 +84,6 @@ export class OrderitemsService {
       orderItem.order = order;
     }
 
-    // product_id bo‘lsa, tegishli product borligini tekshiramiz
     if (updateOrderitemDto.product) {
       const product = await this.productRepo.findOneBy({
         id: updateOrderitemDto.product,
