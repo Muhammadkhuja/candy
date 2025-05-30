@@ -44,6 +44,18 @@ input CreateCategoryDto {
   name: String!
 }
 
+input CreateOrderDto {
+  note: String!
+  order_date: String!
+  payment_method: String!
+  payment_status: String!
+  phone: String!
+  shipping_address: String!
+  shoppingoption_id: Float
+  total_amout: String!
+  user: Float
+}
+
 input CreateProductDto {
   category_id: Float!
   description: String!
@@ -78,18 +90,34 @@ type Mutation {
   create(createUser: CreateUserDto!): User!
   createAdmin(createAdmin: CreateAdminDto!): Admin!
   createCategory(createCategoryDto: CreateCategoryDto!): Category!
+  createOrder(createOrderDto: CreateOrderDto!): Order!
   createProduct(createProductInput: CreateProductDto!): Product!
   createStorage(createStorageDto: CreateStorageDto!): Storage!
   remove(id: ID!): Float!
   removeAdmin(id: ID!): Float!
   removeCategory(id: ID!): Category!
+  removeOrder(id: Int!): Order!
   removeProduct(id: Int!): String!
   removeStorage(id: Int!): String!
   update(id: ID!, updateUser: UpdateUserDto!): User!
   updateAdmin(id: ID!, updateAdmin: UpdateAdminDto!): Admin!
   updateCategory(id: ID!, updateCategoryDto: UpdateCategoryDto!): Category!
+  updateOrder(id: Int!, updateOrderDto: UpdateOrderDto!): Order!
   updateProduct(id: Int!, updateProductInput: UpdateProductDto!): Product!
   updateStorage(id: Int!, updateStorageDto: UpdateStorageDto!): Storage!
+}
+
+type Order {
+  id: ID!
+  note: String!
+  order_date: String!
+  payment_method: String!
+  payment_status: String!
+  phone: String!
+  shipping_address: String!
+  shippingoption_id: Shippingoption!
+  total_amout: String!
+  user_id: User!
 }
 
 type Product {
@@ -114,8 +142,29 @@ type Query {
   findOneAdmin(id: Float!): Admin!
   getAllStorage: [Storage!]!
   getOneStorage(id: Int!): Storage!
+  order(id: Int!): Order!
+  orders: [Order!]!
   product(id: Int!): Product
   products: [Product!]!
+}
+
+type Shippingoption {
+  base_price: String!
+  deliver_time_max: String!
+  deliver_time_min: String!
+  description: String!
+  estimate_days: String!
+  id: Float!
+  is_available: Boolean!
+  max_distance_kn: String!
+  min_order_amout: String!
+  name: String!
+  order: [Order!]!
+  phone: String!
+  price_per_km: String!
+  provider_image: String!
+  provider_name: String!
+  tracing_avabile: String!
 }
 
 type Storage {
@@ -139,6 +188,19 @@ input UpdateCategoryDto {
   description: String!
   image: String!
   name: String!
+}
+
+input UpdateOrderDto {
+  note: String!
+  order_date: String!
+  payment_method: String!
+  payment_status: String!
+  phone: String!
+  savat_id: Float!
+  shipping_address: String!
+  shoppingoption_id: Float!
+  total_amout: String!
+  user_id: Float!
 }
 
 input UpdateProductDto {
@@ -179,6 +241,7 @@ type User {
   is_active: Boolean!
   location: String!
   name: String!
+  order: [Order!]!
   phone: String!
   refresh_token: String
   role: String!

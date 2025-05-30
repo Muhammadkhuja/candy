@@ -10,6 +10,7 @@ import {
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { Card } from "../../cards/entities/card.entity";
+import { Order } from "../../order/entities/order.entity";
 
 @ObjectType()
 @Entity()
@@ -103,4 +104,8 @@ export class User {
   @OneToMany((type) => Card, (card) => card.user_id)
   @Field((type)=> [Card])
   cards: Card[]
+
+  @OneToMany((type) => Order, (order) => order.user_id)
+  @Field((type)=> [Order])
+  order: Order[]
 }

@@ -1,5 +1,5 @@
 import { ObjectType, Field } from "@nestjs/graphql";
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import {
   IsBoolean,
@@ -7,6 +7,7 @@ import {
   IsString,
   IsPhoneNumber,
 } from "class-validator";
+import { Order } from "../../order/entities/order.entity";
 
 @ObjectType()
 @Entity()
@@ -134,4 +135,9 @@ export class Shippingoption {
   @IsBoolean()
   @IsNotEmpty()
   is_available: boolean;
+
+  
+    @OneToMany((type) => Order, (order) => order.shippingoption_id)
+    @Field((type)=> [Order])
+    order: Order[]
 }
