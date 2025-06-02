@@ -4,6 +4,7 @@ import * as cookieParser from "cookie-parser";
 import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { projectDescription } from "../fordescription";
+import * as basicAuth from "express-basic-auth";
 
 async function start() {
   try {
@@ -18,7 +19,7 @@ async function start() {
       .setTitle("Qandolat maxsulotlari online do'koni projecti")
       .setDescription(projectDescription)
       .setVersion("1.0")
-      // .addTag("NestJS", "Swagger")
+      .addTag("NestJS", "Swagger")
       .addBearerAuth(
         {
           type: "http",
@@ -29,9 +30,17 @@ async function start() {
       )
       .build();
 
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup("/", app, document);
 
+    app.use(
+      ["/api/"],
+      basicAuth({
+        users: { admin: "hello" },
+        challenge: true,
+      })
+    );
+
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup("/api/doc", app, document);
 
     app.use(cookieParser());
     await app.listen(PORT, () => {

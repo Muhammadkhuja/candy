@@ -17,6 +17,7 @@ import { SavatModule } from './savat/savat.module';
 import { SavatitemModule } from './savatitem/savatitem.module';
 import { SevimliModule } from './sevimli/sevimli.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { MailModule } from './common/mail/mail.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { ReviewsModule } from './reviews/reviews.module';
     SavatitemModule,
     SevimliModule,
     ReviewsModule,
+    MailModule
   ],
   controllers: [],
   providers: [],

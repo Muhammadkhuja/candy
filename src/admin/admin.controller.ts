@@ -92,4 +92,9 @@ export class AdminController {
     const result = await this.adminService.updatePassword(id, dto);
     return { message: result };
   }
+
+  @Get("activate/:link")
+  activateUser(@Param("link") link: string) {
+    return this.adminService.activateAdmin(link);
+  }
 }

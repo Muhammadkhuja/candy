@@ -7,7 +7,7 @@ import {
   IsString,
   Length,
 } from "class-validator";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Generated, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { Card } from "../../cards/entities/card.entity";
 import { Order } from "../../order/entities/order.entity";
@@ -82,7 +82,7 @@ export class User {
     description: "Foydalanuvchi faolmi yoki yoq (true/false)",
   })
   @Field()
-  @Column({ default: true })
+  @Column({ default: false })
   @IsBoolean()
   is_active: boolean;
 
@@ -103,6 +103,10 @@ export class User {
   @IsOptional()
   @IsString()
   refresh_token: string;
+
+  @Column({ nullable: true })
+  @Generated("uuid")
+  activation_link: string;
 
   @OneToMany((type) => Card, (card) => card.user_id)
   @Field((type) => [Card])

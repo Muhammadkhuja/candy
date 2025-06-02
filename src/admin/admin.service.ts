@@ -3,6 +3,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  ServiceUnavailableException,
 } from "@nestjs/common";
 import { CreateAdminDto } from "./dto/create-admin.dto";
 import { UpdateAdminDto } from "./dto/update-admin.dto";
@@ -10,11 +11,14 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Admin } from "./entities/admin.entity";
 import { Repository } from "typeorm";
 import * as bcrypt from "bcrypt";
+import { MailService } from "../common/mail/mail.service";
 
 @Injectable()
 export class AdminService {
   constructor(
-    @InjectRepository(Admin) private readonly adminRepo: Repository<Admin>
+    @InjectRepository(Admin)
+    private readonly adminRepo: Repository<Admin>,
+    private readonly mailService: MailService
   ) {}
 
   async create(createAdminDto: CreateAdminDto) {
@@ -23,10 +27,19 @@ export class AdminService {
       throw new BadGatewayException("Parollar mos emas");
     }
     const hashed_password = await bcrypt.hash(password, 7);
-    return this.adminRepo.save({
+    const newAdmin = await this.adminRepo.save({
       ...otherData,
       hashed_password,
     });
+    try {
+      console.log("Sending email to:", newAdmin.email);
+      // await this.mailService.sendMail(newAdmin);
+      await this.mailService.sendMailAd(newAdmin);
+    } catch (error) {
+      console.error("SendMail error:", error);
+      throw new ServiceUnavailableException("Email yuborishda xatolik");
+    }
+    return newAdmin;
   }
 
   findAll() {
@@ -68,7 +81,6 @@ export class AdminService {
 
     await this.adminRepo.update(id, updateData);
 
-
     const updatedAdmin = await this.adminRepo.findOne({ where: { id } });
     return updatedAdmin;
   }
@@ -85,22 +97,46 @@ export class AdminService {
 
   async updatePassword(
     id: number,
-    dto: { oldpassword: string, newpassword: string},
+    dto: { oldpassword: string; newpassword: string }
   ): Promise<string> {
-    const admin = await this.adminRepo.findOne({where: {id}})
-    
-    if(!admin) throw new NotFoundException("Foydalanuvchi topilmadi")
-      const isMatch = await bcrypt.compare(
-        dto.oldpassword,
-        admin!.hashed_password
+    const admin = await this.adminRepo.findOne({ where: { id } });
+
+    if (!admin) throw new NotFoundException("Foydalanuvchi topilmadi");
+    const isMatch = await bcrypt.compare(
+      dto.oldpassword,
+      admin!.hashed_password
+    );
+    if (!isMatch) throw new BadRequestException("Eski parol noto'g'ri");
+
+    const hashedNewPassword = await bcrypt.hash(dto.newpassword, 7);
+    admin!.hashed_password = hashedNewPassword;
+
+    await this.adminRepo.save(admin!);
+
+    return "Parol muvaffaqiyatli yangilandi";
+  }
+
+  async activateAdmin(link: string) {
+    if (!link) {
+      throw new BadRequestException("Activation link topilmadi");
+    }
+    const admin = await this.adminRepo.findOne({
+      where: {
+        activation_link: link,
+        is_active: false,
+      },
+    });
+    if (!admin) {
+      throw new BadRequestException(
+        "Foydalanuvchi allaqachon faollashtrilgan yoki noto'g'ri link"
       );
-      if (!isMatch) throw new BadRequestException("Eski parol noto'g'ri");
+    }
+    admin.is_active = true;
+    await this.adminRepo.save(admin);
 
-      const hashedNewPassword = await bcrypt.hash(dto.newpassword, 7);
-      admin!.hashed_password = hashedNewPassword;
-
-      await this.adminRepo.save(admin!);
-
-      return "Parol muvaffaqiyatli yangilandi";
+    return {
+      message: "Foydalanuvchi muvaffaqiyatli faollashtirildi",
+      is_active: admin.is_active,
+    };
   }
 }

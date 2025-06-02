@@ -57,12 +57,17 @@ export class UserController {
     return this.userService.remove(+id);
   }
 
-    @Patch(":id/password")
-    async updatePassword(
-      @Param("id") id: number,
-      @Body() dto: UpdateAdminPasswordDto
-    ): Promise<{ message: string }> {
-      const result = await this.userService.updatePassword(id, dto);
-      return { message: result };
-    }
+  @Patch(":id/password")
+  async updatePassword(
+    @Param("id") id: number,
+    @Body() dto: UpdateAdminPasswordDto
+  ): Promise<{ message: string }> {
+    const result = await this.userService.updatePassword(id, dto);
+    return { message: result };
+  }
+
+  @Get("activate/:link")
+  activateUser(@Param("link") link: string) {
+    return this.userService.activateUser(link);
+  }
 }

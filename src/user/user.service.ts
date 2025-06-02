@@ -3,6 +3,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  ServiceUnavailableException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -11,13 +12,14 @@ import * as bcrypt from "bcrypt";
 import { User } from "./entities/user.entity";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { Card } from "../cards/entities/card.entity";
+import { MailService } from "../common/mail/mail.service";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepo: Repository<User>
+    private readonly userRepo: Repository<User>,
+    private readonly mailService: MailService
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -29,16 +31,24 @@ export class UserService {
 
     const hashed_password = await bcrypt.hash(password, 7);
 
-    return this.userRepo.save({
+    const newUser = await this.userRepo.save({
       ...otherData,
       hashed_password,
     });
+
+    try {
+      console.log("Sending email to:", newUser.email);
+      await this.mailService.sendMail(newUser);
+    } catch (error) {
+      console.error("SendMail error:", error);
+      throw new ServiceUnavailableException("Email yuborishda xatolik");
+    }
+    return newUser;
   }
 
   async findAll() {
     const hello = await this.userRepo.find({ relations: ["cards"] });
     return hello;
-      
   }
 
   async findOne(id: number) {
@@ -107,5 +117,29 @@ export class UserService {
     await this.userRepo.save(user);
 
     return "Parol muvaffaqiyatli yangilandi";
+  }
+
+  async activateUser(link: string) {
+    if (!link) {
+      throw new BadRequestException("Activation link topilmadi");
+    }
+    const user = await this.userRepo.findOne({
+      where: {
+        activation_link: link,
+        is_active: false,
+      },
+    });
+    if (!user) {
+      throw new BadRequestException(
+        "Foydalanuvchi allaqachon faollashtrilgan yoki noto'g'ri link"
+      );
+    }
+    user.is_active = true;
+    await this.userRepo.save(user);
+
+    return {
+      message: "Foydalanuvchi muvaffaqiyatli faollashtirildi",
+      is_active: user.is_active,
+    };
   }
 }

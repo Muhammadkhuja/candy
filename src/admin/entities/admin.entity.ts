@@ -6,7 +6,7 @@ import {
   IsString,
   Length,
 } from "class-validator";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Generated, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 
 @ObjectType()
@@ -64,7 +64,11 @@ export class Admin {
     description: "Admin faolmi yoki yo'q (true/false)",
   })
   @Field()
-  @Column({ default: true })
+  @Column({ default: false })
   @IsBoolean()
   is_active: boolean;
+
+  @Column({ nullable: true })
+  @Generated("uuid")
+  activation_link: string;
 }
