@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { AdminService } from "./admin.service";
 import { CreateAdminDto } from "./dto/create-admin.dto";
@@ -17,6 +18,8 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { UpdateAdminPasswordDto } from "./dto/update-password.dto";
+import { SelfAdminGuard } from "../common/guards/selfadmin.guard";
+import { AuthGuard } from "../common/guards/auth.guard";
 
 @ApiTags("Admin-Administratorlar")
 @ApiBearerAuth("access-token")
@@ -48,6 +51,9 @@ export class AdminController {
     return this.adminService.findAll();
   }
 
+
+  @UseGuards(SelfAdminGuard)
+  @UseGuards(AuthGuard)
   @Get(":id")
   @ApiOperation({ summary: "Id bo'yicha Admin olish" })
   @ApiResponse({

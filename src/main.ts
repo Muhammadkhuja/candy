@@ -31,16 +31,16 @@ async function start() {
       .build();
 
 
-    app.use(
-      ["/api/"],
-      basicAuth({
-        users: { admin: "hello" },
-        challenge: true,
-      })
-    );
+    // app.use(
+    //   ["/"],
+    //   basicAuth({
+    //     users: { admin: "hello" },
+    //     challenge: true,
+    //   })
+    // );
 
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup("/api/doc", app, document);
+    SwaggerModule.setup("/", app, document);
 
     app.use(cookieParser());
     await app.listen(PORT, () => {

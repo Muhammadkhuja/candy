@@ -6,12 +6,18 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { UpdateAdminPasswordDto } from "../admin/dto/update-password.dto";
+import { AuthGuard } from "../common/guards/auth.guard";
+import { AdminGuard } from "../common/guards/admin.guard";
+import { UserGuard } from "../common/guards/user.guard";
+import { JwtRolesGuard } from "../common/guards/roles.guard";
+import { Roles } from "../common/decorators/rolesauth.decorator";
 
 @ApiTags("Foydalanuvchilar - User")
 @Controller("user")
@@ -26,6 +32,7 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  // @UseGuards(AuthGuard)
   @Get()
   @ApiOperation({ summary: "Barcha foydalanuvchilarni olish" })
   @ApiResponse({ status: 200, description: "Foydalanuvchilar ro'yxati" })
@@ -33,6 +40,10 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  // @Roles("admin", )
+  // @UseGuards(JwtRolesGuard)
+  // @UseGuards(UserGuard)
+  @UseGuards(AuthGuard)
   @Get(":id")
   @ApiOperation({ summary: "ID orqali foydalanuvchini olish" })
   @ApiResponse({ status: 200, description: "Foydalanuvchi topildi" })
