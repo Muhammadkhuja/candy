@@ -5,13 +5,18 @@ import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { projectDescription } from "../fordescription";
 import * as basicAuth from "express-basic-auth";
+import { WinstonModule } from "nest-winston";
+import { winstomConfig } from "./common/logger/winston-logger";
+import { AllExeptionsFilter } from "./common/errors/error.handling";
 
 async function start() {
   try {
     const PORT = process.env.PORT || 3030;
     const app = await NestFactory.create(AppModule, {
-      logger: ["debug", "error"],
+      logger: WinstonModule.createLogger(winstomConfig)
     });
+
+    app.useGlobalFilters(new AllExeptionsFilter())
     app.setGlobalPrefix("api");
     app.useGlobalPipes(new ValidationPipe());
 
@@ -31,13 +36,13 @@ async function start() {
       .build();
 
 
-    // app.use(
-    //   ["/"],
-    //   basicAuth({
-    //     users: { admin: "hello" },
-    //     challenge: true,
-    //   })
-    // );
+    app.use(
+      ["/"],
+      basicAuth({
+        users: { admin: "hello" },
+        challenge: true,
+      })
+    );
 
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup("/", app, document);
