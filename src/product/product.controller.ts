@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  UseGuards,
 } from "@nestjs/common";
 import { ProductService } from "./product.service";
 import { CreateProductDto } from "./dto/create-product.dto";
@@ -17,12 +19,16 @@ import {
   ApiParam,
   ApiBody,
 } from "@nestjs/swagger";
+import { AdminGuard } from "../common/guards/admin.guard";
+import { AuthGuard } from "../common/guards/auth.guard";
+import { UserGuard } from "../common/guards/user.guard";
 
 @ApiTags("Mahsulotlar")
 @Controller("product")
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
-
+  @UseGuards(AdminGuard)
+  @UseGuards(AuthGuard)
   @Post()
   @ApiOperation({ summary: "Yangi mahsulot yaratish" })
   @ApiResponse({
@@ -34,13 +40,16 @@ export class ProductController {
     return this.productService.create(createProductDto);
   }
 
+  @UseGuards(UserGuard)
+  @UseGuards(AuthGuard)
   @Get()
   @ApiOperation({ summary: "Barcha mahsulotlarni olish" })
-  @ApiResponse({ status: 200, description: "Mahsulotlar ro‘yxati" })
+  @ApiResponse({ status: 200, description: "Mahsulotlar ro'yxati" })
   findAll() {
     return this.productService.findAll();
   }
-
+  @UseGuards(UserGuard)
+  @UseGuards(AuthGuard)
   @Get(":id")
   @ApiOperation({ summary: "Bitta mahsulotni olish" })
   @ApiResponse({ status: 200, description: "Mahsulot topildi" })
@@ -55,6 +64,8 @@ export class ProductController {
     return this.productService.findOne(+id);
   }
 
+  @UseGuards(AdminGuard)
+  @UseGuards(AuthGuard)
   @Patch(":id")
   @ApiOperation({ summary: "Mahsulotni yangilash" })
   @ApiResponse({
@@ -73,11 +84,13 @@ export class ProductController {
     return this.productService.update(+id, updateProductDto);
   }
 
+  @UseGuards(AdminGuard)
+  @UseGuards(AuthGuard)
   @Delete(":id")
-  @ApiOperation({ summary: "Mahsulotni o‘chirish" })
+  @ApiOperation({ summary: "Mahsulotni o'chirish" })
   @ApiResponse({
     status: 200,
-    description: "Mahsulot muvaffaqiyatli o‘chirildi",
+    description: "Mahsulot muvaffaqiyatli o'chirildi",
   })
   @ApiResponse({ status: 404, description: "Mahsulot topilmadi" })
   @ApiParam({

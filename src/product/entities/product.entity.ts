@@ -116,13 +116,11 @@ export class Product {
   @Field((type) => [SavatItem])
   savatitem: SavatItem[];
 
-  
-    @OneToMany((type) => Sevimli, (sevimli) => sevimli.user_id)
-    @Field((type) => [Sevimli])
-    sevimli: Sevimli[];
+  @OneToMany((type) => Sevimli, (sevimli) => sevimli.user_id)
+  @Field((type) => [Sevimli])
+  sevimli: Sevimli[];
 
-    
-      @OneToMany((type) => Review, (review) => review.product_id)
-      @Field((type) => [Review])
-      review: Review[];
+  @OneToMany((type) => Review, (review) => review.product_id)
+  @Field((type) => [Review])
+  review: Review[];
 }

@@ -18,6 +18,7 @@ import { AdminGuard } from "../common/guards/admin.guard";
 import { UserGuard } from "../common/guards/user.guard";
 import { JwtRolesGuard } from "../common/guards/roles.guard";
 import { Roles } from "../common/decorators/rolesauth.decorator";
+import { SelfUserGuard } from "../common/guards/selfuser.guard";
 
 @ApiTags("Foydalanuvchilar - User")
 @Controller("user")
@@ -32,7 +33,8 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  // @UseGuards(AuthGuard)
+  @UseGuards(AdminGuard)
+  @UseGuards(AuthGuard)
   @Get()
   @ApiOperation({ summary: "Barcha foydalanuvchilarni olish" })
   @ApiResponse({ status: 200, description: "Foydalanuvchilar ro'yxati" })
@@ -40,9 +42,7 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  // @Roles("admin", )
-  // @UseGuards(JwtRolesGuard)
-  // @UseGuards(UserGuard)
+  @UseGuards(SelfUserGuard)
   @UseGuards(AuthGuard)
   @Get(":id")
   @ApiOperation({ summary: "ID orqali foydalanuvchini olish" })
@@ -52,6 +52,8 @@ export class UserController {
     return this.userService.findOne(+id);
   }
 
+  @UseGuards(UserGuard)
+  @UseGuards(AuthGuard)
   @Patch(":id")
   @ApiOperation({ summary: "Foydalanuvchini yangilash" })
   @ApiResponse({ status: 200, description: "Foydalanuvchi yangilandi" })
@@ -60,6 +62,8 @@ export class UserController {
     return this.userService.update(+id, updateUserDto);
   }
 
+  @UseGuards(AdminGuard)
+  @UseGuards(AuthGuard)
   @Delete(":id")
   @ApiOperation({ summary: "Foydalanuvchini o'chirish" })
   @ApiResponse({ status: 200, description: "Foydalanuvchi o'chirildi" })

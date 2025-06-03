@@ -6,17 +6,25 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { CardsService } from "./cards.service";
 import { CreateCardDto } from "./dto/create-card.dto";
 import { UpdateCardDto } from "./dto/update-card.dto";
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from "@nestjs/swagger";
+import { UserGuard } from "../common/guards/user.guard";
+import { AuthGuard } from "../common/guards/auth.guard";
+import { AdminGuard } from "../common/guards/admin.guard";
+import { Roles } from "../common/decorators/rolesauth.decorator";
+import { JwtRolesGuard } from "../common/guards/roles.guard";
 
 @ApiTags("Karta - Cards")
 @Controller("cards")
 export class CardsController {
   constructor(private readonly cardsService: CardsService) {}
 
+  @UseGuards(UserGuard)
+  @UseGuards(AuthGuard)
   @Post()
   @ApiOperation({ summary: "Yangi karta qo'shish" })
   @ApiResponse({ status: 201, description: "Karta yaratildi" })
@@ -24,6 +32,8 @@ export class CardsController {
     return this.cardsService.create(createCardDto);
   }
 
+  @UseGuards(AdminGuard)
+  @UseGuards(AuthGuard)
   @Get()
   @ApiOperation({ summary: "Barcha kartalarni olish" })
   @ApiResponse({
@@ -36,6 +46,8 @@ export class CardsController {
     return this.cardsService.findAll();
   }
 
+  @UseGuards(UserGuard)
+  @UseGuards(AuthGuard)
   @Get(":id")
   @ApiOperation({ summary: "ID bo'yicha kartani olish" })
   @ApiResponse({
@@ -48,6 +60,9 @@ export class CardsController {
     return this.cardsService.findOne(+id);
   }
 
+  @Roles("admin", "user")
+  @UseGuards(JwtRolesGuard)
+  @UseGuards(AuthGuard)
   @Patch(":id")
   @ApiOperation({ summary: "Kartani yangilash" })
   @ApiResponse({
@@ -60,6 +75,8 @@ export class CardsController {
     return this.cardsService.update(+id, updateCardDto);
   }
 
+  @UseGuards(AdminGuard)
+  @UseGuards(AuthGuard)
   @Delete(":id")
   @ApiOperation({ summary: "Kartani o'chirish" })
   @ApiResponse({ status: 200, description: "Karta o'chirildi", type: Number })

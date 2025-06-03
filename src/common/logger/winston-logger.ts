@@ -10,7 +10,7 @@ export const winstomConfig = {
       ),
     }),
     new winston.transports.File({
-      filename: "log/combine.log",
+      filename: "logs/combine.log",
       level: "info",
       format: winston.format.combine(
         winston.format.label({ label: "Candy" }),

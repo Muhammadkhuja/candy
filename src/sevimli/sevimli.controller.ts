@@ -6,17 +6,23 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { SevimliService } from "./sevimli.service";
 import { CreateSevimliDto } from "./dto/create-sevimli.dto";
 import { UpdateSevimliDto } from "./dto/update-sevimli.dto";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { AuthGuard } from "../common/guards/auth.guard";
+import { UserGuard } from "../common/guards/user.guard";
+import { AdminGuard } from "../common/guards/admin.guard";
 
 @ApiTags("Sevimli")
 @Controller("sevimli")
 export class SevimliController {
   constructor(private readonly sevimliService: SevimliService) {}
 
+  @UseGuards(UserGuard)
+  @UseGuards(AuthGuard)
   @Post()
   @ApiOperation({ summary: "Yangi sevimli element yaratish" })
   @ApiResponse({ status: 201, description: "Sevimli element yaratildi." })
@@ -25,6 +31,8 @@ export class SevimliController {
     return this.sevimliService.create(createSevimliDto);
   }
 
+  @UseGuards(UserGuard)
+  @UseGuards(AuthGuard)
   @Get()
   @ApiOperation({ summary: "Barcha sevimli elementlarni olish" })
   @ApiResponse({ status: 200, description: "Sevimli elementlar ro'yxati." })
@@ -32,6 +40,8 @@ export class SevimliController {
     return this.sevimliService.findAll();
   }
 
+  @UseGuards(UserGuard)
+  @UseGuards(AuthGuard)
   @Get(":id")
   @ApiOperation({ summary: "ID bo'yicha bitta sevimli elementni olish" })
   @ApiResponse({ status: 200, description: "Topilgan sevimli element." })
@@ -39,7 +49,8 @@ export class SevimliController {
   findOne(@Param("id") id: string) {
     return this.sevimliService.findOne(+id);
   }
-
+  @UseGuards(AdminGuard)
+  @UseGuards(AuthGuard)
   @Patch(":id")
   @ApiOperation({ summary: "Sevimli elementni yangilash" })
   @ApiResponse({
@@ -52,6 +63,8 @@ export class SevimliController {
     return this.sevimliService.update(+id, updateSevimliDto);
   }
 
+  @UseGuards(UserGuard)
+  @UseGuards(AuthGuard)
   @Delete(":id")
   @ApiOperation({ summary: "Sevimli elementni o'chirish" })
   @ApiResponse({ status: 200, description: "Sevimli element o'chirildi." })

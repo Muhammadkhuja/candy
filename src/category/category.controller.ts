@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import {
   ApiTags,
@@ -20,12 +21,16 @@ import { CategoryService } from "./category.service";
 import { CreateCategoryDto } from "./dto/create-category.dto";
 import { UpdateCategoryDto } from "./dto/update-category.dto";
 import { Category } from "./entities/category.entity";
+import { AdminGuard } from "../common/guards/admin.guard";
+import { AuthGuard } from "../common/guards/auth.guard";
 
 @ApiTags("Category")
 @Controller("category")
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
+  @UseGuards(AdminGuard)
+  @UseGuards(AuthGuard)
   @Post()
   @ApiOperation({ summary: "Yangi kategoriya yaratish" })
   @ApiCreatedResponse({
@@ -39,6 +44,7 @@ export class CategoryController {
     return this.categoryService.create(createCategoryDto);
   }
 
+  @UseGuards(AuthGuard)
   @Get()
   @ApiOperation({ summary: "Barcha kategoriyalarni olish" })
   @ApiResponse({
@@ -50,6 +56,7 @@ export class CategoryController {
     return this.categoryService.findAll();
   }
 
+  @UseGuards(AuthGuard)
   @Get(":id")
   @ApiOperation({ summary: "Kategoriya ID orqali topish" })
   @ApiResponse({
@@ -63,6 +70,8 @@ export class CategoryController {
     return this.categoryService.findOne(+id);
   }
 
+  @UseGuards(AdminGuard)
+  @UseGuards(AuthGuard)
   @Patch(":id")
   @ApiOperation({ summary: "Kategoriya yangilash" })
   @ApiResponse({
@@ -79,6 +88,8 @@ export class CategoryController {
     return this.categoryService.update(+id, updateCategoryDto);
   }
 
+  @UseGuards(AdminGuard)
+  @UseGuards(AuthGuard)
   @Delete(":id")
   @ApiOperation({ summary: "Kategoriya o'chirish" })
   @ApiResponse({ status: 200, description: "Kategoriya o'chirildi" })

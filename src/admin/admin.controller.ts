@@ -20,6 +20,8 @@ import {
 import { UpdateAdminPasswordDto } from "./dto/update-password.dto";
 import { SelfAdminGuard } from "../common/guards/selfadmin.guard";
 import { AuthGuard } from "../common/guards/auth.guard";
+import { SuperadminGuard } from "../common/guards/super-admin.guard";
+import { AdminGuard } from "../common/guards/admin.guard";
 
 @ApiTags("Admin-Administratorlar")
 @ApiBearerAuth("access-token")
@@ -27,6 +29,8 @@ import { AuthGuard } from "../common/guards/auth.guard";
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
+  @UseGuards(SuperadminGuard)
+  @UseGuards(AuthGuard)
   @Post()
   @ApiOperation({ summary: "Admin qo'shish" })
   @ApiResponse({
@@ -39,6 +43,8 @@ export class AdminController {
     return this.adminService.create(createAdminDto);
   }
 
+  @UseGuards(AdminGuard)
+  @UseGuards(AuthGuard)
   @Get()
   @ApiOperation({ summary: "Admin olish" })
   @ApiResponse({
@@ -50,7 +56,6 @@ export class AdminController {
   findAll() {
     return this.adminService.findAll();
   }
-
 
   @UseGuards(SelfAdminGuard)
   @UseGuards(AuthGuard)
@@ -66,6 +71,8 @@ export class AdminController {
     return this.adminService.findOne(+id);
   }
 
+  @UseGuards(SelfAdminGuard)
+  @UseGuards(AuthGuard)
   @Patch(":id")
   @ApiOperation({ summary: "Adminni taxrirlash" })
   @ApiResponse({
@@ -78,6 +85,8 @@ export class AdminController {
     return this.adminService.update(+id, updateAdminDto);
   }
 
+  @UseGuards(SuperadminGuard)
+  @UseGuards(AuthGuard)
   @Delete(":id")
   @ApiOperation({ summary: "Adminni o'chirish" })
   @ApiResponse({
@@ -90,6 +99,8 @@ export class AdminController {
     return this.adminService.remove(+id);
   }
 
+  @UseGuards(SelfAdminGuard)
+  @UseGuards(AuthGuard)
   @Patch(":id/password")
   async updatePassword(
     @Param("id") id: number,
