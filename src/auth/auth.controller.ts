@@ -1,16 +1,21 @@
-import { Body, Controller, Post, Req, Res } from "@nestjs/common";
+import { Body, Controller, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { CreateAdminDto } from "../admin/dto/create-admin.dto";
 import { SingInDto } from "./dto/sing-in.dto";
 import { Request, Response } from "express";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { CreateUserDto } from "../user/dto/create-user.dto";
+import { AdminGuard } from "../common/guards/admin.guard";
+import { AuthGuard } from "../common/guards/auth.guard";
+import { SuperadminGuard } from "../common/guards/super-admin.guard";
 
 @ApiTags("Auth")
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @UseGuards(SuperadminGuard)
+  @UseGuards(AuthGuard)
   @Post("admin-sing-up")
   @ApiOperation({ summary: "Admin ro'yxatdan o'tkazish" })
   @ApiResponse({
@@ -42,10 +47,13 @@ export class AuthController {
     status: 200,
     description: "Admin muvaffaqiyatli tizimdan chiqdi",
   })
+  
   async singOutAdmin(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response
   ) {
+    console.log(1);
+    
     return this.authService.singOutAdmin(req, res);
   }
 

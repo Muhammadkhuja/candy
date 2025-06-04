@@ -121,7 +121,7 @@ export class AuthService {
 
   async singOutAdmin(req: Request, res: Response) {
     const refresh_token = req.cookies.refresh_token;
-
+    console.log(refresh_token);
     const admin = await this.adminService.findAdminByRefresh(refresh_token);
 
     if (!admin) {
@@ -223,6 +223,7 @@ export class AuthService {
   async singOutUser(req: Request, res: Response) {
     const refresh_token = req.cookies.refresh_token;
 
+    
     const user = await this.userService.findUserByRefresh(refresh_token);
 
     if (!user) {

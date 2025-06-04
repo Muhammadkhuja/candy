@@ -29,8 +29,8 @@ import { AdminGuard } from "../common/guards/admin.guard";
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
-  // @UseGuards(SuperadminGuard)
-  // @UseGuards(AuthGuard)
+  @UseGuards(SuperadminGuard)
+  @UseGuards(AuthGuard)
   @Post()
   @ApiOperation({ summary: "Admin qo'shish" })
   @ApiResponse({
