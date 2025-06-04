@@ -85,6 +85,9 @@ export class AuthService {
   async singInAdmin(singInDto: SingInDto, res: Response) {
     const admin = await this.adminService.findAdminByEmail(singInDto.email);
 
+    if (!admin?.is_active) {
+      throw new BadRequestException("Oldin activatsiyadan o'ting !");
+    }
     if (!admin) {
       throw new BadRequestException("Email yoki password hato");
     }
@@ -180,6 +183,9 @@ export class AuthService {
   async singInUser(singInDto: SingInDto, res: Response) {
     const user = await this.userService.findUserByEmail(singInDto.email);
 
+    if (!user?.is_active) {
+      throw new BadRequestException("Oldin activatsiyadan o'ting !");
+    }
     if (!user) {
       throw new BadRequestException("Email yoki password hato");
     }
