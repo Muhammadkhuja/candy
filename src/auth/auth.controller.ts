@@ -47,14 +47,13 @@ export class AuthController {
     status: 200,
     description: "Admin muvaffaqiyatli tizimdan chiqdi",
   })
-  
   async singOutAdmin(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response
   ) {
     console.log(1);
     
-    return this.authService.singOutAdmin(req, res);
+    return this.authService.singOutAdmin(req.cookies.admin_refresh_token, res);
   }
 
   @Post("admin-refresh")
@@ -108,7 +107,7 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response
   ) {
-    return this.authService.singOutUser(req, res);
+    return this.authService.singOutUser(req.cookies.refresh_token, res);
   }
 
   @Post("user-refresh")

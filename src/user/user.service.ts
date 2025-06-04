@@ -142,4 +142,10 @@ export class UserService {
       is_active: user.is_active,
     };
   }
+
+  async updateRefreshToken(id: number, refresh_token: string) {
+    await this.userRepo.update(id, {
+      refresh_token,
+    });
+  }
 }

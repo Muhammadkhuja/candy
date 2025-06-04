@@ -100,7 +100,7 @@ export class AuthService {
       throw new BadRequestException("Email yoki passwor hato p ");
     }
     const tokens = await this.AdmingenerateToken(admin);
-    res.cookie("refresh_token", tokens.refreshToken, {
+    res.cookie("admin_refresh_token", tokens.refreshToken, {
       httpOnly: true,
       maxAge: Number(process.env.COOKIE_TIME),
     });
@@ -119,24 +119,45 @@ export class AuthService {
     };
   }
 
-  async singOutAdmin(req: Request, res: Response) {
-    const refresh_token = req.cookies.refresh_token;
-    console.log(refresh_token);
-    const admin = await this.adminService.findAdminByRefresh(refresh_token);
+  // async singOutAdmin(req: Request, res: Response) {
+  //   // const refresh_token = req.cookies.admin_refresh_token;
+  //   const refresh_token = req.cookies["admin_refresh_token"];
+  //   console.log(refresh_token);
 
-    if (!admin) {
-      throw new BadGatewayException("Token yoq yoki noto'g'ri");
+  //   // const admin = await this.adminService.findAdminByRefresh(refresh_token);
+
+  //   // if (!admin) {
+  //   //   throw new BadGatewayException("Token yoq yoki noto'g'ri");
+  //   // }
+  //   const hashed_refresh_token = "";
+  //   await this.adminService.update(id, admin);
+
+  //   res.clearCookie("admin_refresh_token");
+
+  //   return { message: "Siz endi yo'q siz !?" };
+  // }
+
+  async singOutAdmin(refresh_token: string, res: Response) {
+    const userData = this.jwtService.verify(refresh_token, {
+      secret: process.env.REFRESH_TOKEN_KEY,
+    });
+    if (!userData) {
+      throw new ForbiddenException("Token yoq yoki noto'g'ri");
     }
-    admin.refresh_token = "";
-    await this.adminService.update(admin.id, admin);
 
-    res.clearCookie("refresh_token");
+    const hashed_refresh_token = " ";
+    await this.adminService.updateRefreshToken(
+      userData.id,
+      hashed_refresh_token!
+    );
+
+    res.clearCookie("admin_refresh_token");
 
     return { message: "Siz endi yo'q siz !?" };
   }
 
   async AdminrefreshToken(req: Request, res: Response) {
-    const refresh_token = req.cookies["refresh_token"];
+    const refresh_token = req.cookies["admin_refresh_token"];
     if (!refresh_token) {
       throw new ForbiddenException("Refresh token yo'q");
     }
@@ -157,7 +178,7 @@ export class AuthService {
     admin.refresh_token = hashed_refresh_token;
     await this.adminService.update(admin.id, admin);
 
-    res.cookie("refresh_token", tokens.refreshToken, {
+    res.cookie("admin_refresh_token", tokens.refreshToken, {
       maxAge: Number(process.env.COOKIE_TIME),
     });
 
@@ -220,18 +241,35 @@ export class AuthService {
     };
   }
 
-  async singOutUser(req: Request, res: Response) {
-    const refresh_token = req.cookies.refresh_token;
+  // async singOutUser(req: Request, res: Response) {
+  //   const refresh_token = req.cookies.refresh_token;
 
-    
-    const user = await this.userService.findUserByRefresh(refresh_token);
+  //   const user = await this.userService.findUserByRefresh(refresh_token);
 
-    if (!user) {
-      throw new BadGatewayException("Token yo'q yoki noto'g'ri");
+  //   if (!user) {
+  //     throw new BadGatewayException("Token yo'q yoki noto'g'ri");
+  //   }
+
+  //   user.refresh_token = "";
+  //   await this.userService.update(user.id, user);
+
+  //   res.clearCookie("refresh_token");
+
+  //   return { message: "Siz endi yo'q siz !?" };
+  // }
+
+  async singOutUser(refresh_token: string, res: Response) {
+    const userData2 = this.jwtService.verify(refresh_token, {
+      secret: process.env.REFRESH_TOKEN_KEY,
+    });
+    if (!userData2) {
+      throw new ForbiddenException("Token yoq yoki noto'g'ri");
     }
-
-    user.refresh_token = "";
-    await this.userService.update(user.id, user);
+    const hashed_refresh_token = " ";
+    await this.adminService.updateRefreshToken(
+      userData2.id,
+      hashed_refresh_token!
+    );
 
     res.clearCookie("refresh_token");
 

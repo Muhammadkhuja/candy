@@ -139,4 +139,10 @@ export class AdminService {
       is_active: admin.is_active,
     };
   }
+
+  async updateRefreshToken(id: number, refresh_token: string) {
+    await this.adminRepo.update(id, {
+      refresh_token,
+    });
+  }
 }

@@ -27,7 +27,7 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response
   ) {
-    return this.authService.singOutAdmin(req, res);
+    return this.authService.singOutAdmin(req.cookies.admin_refresh_token, res);
   }
 
   @Mutation("admin-refresh")
