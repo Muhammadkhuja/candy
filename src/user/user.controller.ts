@@ -33,7 +33,7 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @UseGuards(AdminGuard)
+  // @UseGuards(AdminGuard)
   @UseGuards(AuthGuard)
   @Get()
   @ApiOperation({ summary: "Barcha foydalanuvchilarni olish" })
@@ -42,7 +42,7 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  @UseGuards(SelfUserGuard)
+  // @UseGuards(SelfUserGuard)
   @UseGuards(AuthGuard)
   @Get(":id")
   @ApiOperation({ summary: "ID orqali foydalanuvchini olish" })
@@ -52,7 +52,7 @@ export class UserController {
     return this.userService.findOne(+id);
   }
 
-  @UseGuards(UserGuard)
+  // @UseGuards(UserGuard)
   @UseGuards(AuthGuard)
   @Patch(":id")
   @ApiOperation({ summary: "Foydalanuvchini yangilash" })
@@ -62,7 +62,7 @@ export class UserController {
     return this.userService.update(+id, updateUserDto);
   }
 
-  @UseGuards(AdminGuard)
+  // @UseGuards(AdminGuard)
   @UseGuards(AuthGuard)
   @Delete(":id")
   @ApiOperation({ summary: "Foydalanuvchini o'chirish" })
